@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidade Amigável - Online</title>
+    <!-- Importando o PeerJS para a conexão online -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        :root {
+            --bg-principal: #f0f2f5;
+            --bg-chat: #ffffff;
+            --texto-principal: #333333;
+            --cor-tema: #3498db; 
+        }
+        .tema-escuro {
+            --bg-principal: #121212;
+            --bg-chat: #1e1e1e;
+            --texto-principal: #e0e0e0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: var(--bg-principal); color: var(--texto-principal); transition: 0.3s; }
+        
+        #onboarding, #app { display: flex; flex-direction: column; height: 100vh; align-items: center; justify-content: center; }
+        #app { display: none; max-width: 600px; margin: 0 auto; background-color: var(--bg-chat); border-radius: 8px; position: relative; }
+
+        /* Telas Iniciais e Configurações */
+        .caixa-padrao { background: var(--bg-chat); padding: 30px; border-radius: 10px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
+        .caixa-padrao input { display: block; margin: 15px auto; padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; }
+        .btn-acao { padding: 10px 20px; background: var(--cor-tema); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+
+        /* Painel de Conexão (Código) */
+        #painelConexao { display: none; position: absolute; top: 70px; left: 0; width: 100%; background: var(--bg-chat); padding: 20px; border-bottom: 2px solid var(--cor-tema); z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .meu-codigo-box { background: var(--bg-principal); padding: 10px; border-radius: 5px; margin-bottom: 15px; font-family: monospace; font-size: 1.2em; font-weight: bold; letter-spacing: 2px;}
+
+        /* Interface Principal */
+        .header { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 15px; background-color: var(--bg-principal); border-bottom: 1px solid #ccc; }
+        .perfil-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .avatar { width: 40px; height: 40px; background-color: var(--cor-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; filter: brightness(0.6); color: white; }
+        
+        .chat-area { flex: 1; width: 100%; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .balao { max-width: 75%; padding: 10px 15px; border-radius: 10px; color: white; position: relative; word-wrap: break-word; }
+        .enviada { background-color: #25d366; align-self: flex-end; border-bottom-right-radius: 0; }
+        .recebida { background-color: #000000; align-self: flex-start; border-bottom-left-radius: 0; }
+        .sistema { background-color: transparent; color: gray; align-self: center; font-size: 0.8em; text-align: center; }
+        
+        .meta-dados { display: flex; justify-content: flex-end; gap: 5px; font-size: 0.7em; margin-top: 5px; opacity: 0.8; }
+        .vv { color: var(--cor-tema); font-weight: bold; }
+
+        .input-area { display: flex; width: 100%; padding: 10px; background-color: var(--bg-principal); border-top: 1px solid #ccc; }
+        .input-area input { flex: 1; padding: 12px; border-radius: 20px; border: 1px solid #ccc; outline: none; }
+        .input-area button { background: var(--cor-tema); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; margin-left: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- Onboarding -->
+    <div id="onboarding">
+        <div class="caixa-padrao">
+            <h2>Comunidade Amigável</h2>
+            <input type="text" id="nomeUsuario" placeholder="Seu Nome" maxlength="20">
+            <label>Escolha sua cor:</label>
+            <input type="color" id="corUsuario" value="#3498db">
+            <button class="btn-acao" onclick="salvarPerfilEEntrar()">Entrar</button>
+        </div>
+    </div>
+
+    <!-- Interface do App -->
+    <div id="app">
+        <div class="header">
+            <div class="perfil-info" onclick="abrirConfiguracoes()">
+                <div class="avatar">👤</div>
+                <div>
+                    <h3 id="displayNome">Nome</h3>
+                    <small style="color: gray;">Tocar para Conectar</small>
+                </div>
+            </div>
+            <button onclick="alternarTema()" style="background:none; border:none; cursor:pointer; font-size: 1.5em;">🌙</button>
+        </div>
+        
+        <!-- Painel de Códigos (Configurações) -->
+        <div id="painelConexao">
+            <p>Seu Código de Conexão:</p>
+            <div class="meu-codigo-box" id="meuCodigo">Gerando...</div>
+            <p>Adicionar amigo:</p>
+            <input type="text" id="codigoAmigo" placeholder="Cole o código do amigo aqui">
+            <button class="btn-acao" onclick="conectarComAmigo()">Conectar</button>
+            <button class="btn-acao" style="background:#dc3545;" onclick="fecharConfiguracoes()">Fechar</button>
+        </div>
+
+        <div class="chat-area" id="chatArea"></div>
+
+        <div class="input-area">
+            <input type="text" id="inputMensagem" placeholder="Digite uma mensagem..." onkeypress="lidarEnter(event)" disabled>
+            <button id="btnEnviar" onclick="enviarMensagem()" disabled>➢</button>
+        </div>
+    </div>
+
+    <script>
+        let nomeAtual = "";
+        let corAtual = "";
+        let peer;
+        let conexaoAtiva = null;
+
+        // 1. Inicialização e LocalStorage
+        window.onload = () => {
+            const perfilSalvo = localStorage.getItem("comunidadePerfil");
+            if (perfilSalvo) {
+                const dados = JSON.parse(perfilSalvo);
+                document.getElementById("nomeUsuario").value = dados.nome;
+                document.getElementById("corUsuario").value = dados.cor;
+                salvarPerfilEEntrar(); // Entra direto se já tiver salvo
+            }
+        };
+
+        function salvarPerfilEEntrar() {
+            nomeAtual = document.getElementById("nomeUsuario").value.trim() || "Anônimo";
+            corAtual = document.getElementById("corUsuario").value;
+
+            // Salva no navegador do usuário
+            localStorage.setItem("comunidadePerfil", JSON.stringify({ nome: nomeAtual, cor: corAtual }));
+
+            document.documentElement.style.setProperty('--cor-tema', corAtual);
+            document.getElementById("displayNome").innerText = nomeAtual;
+
+            document.getElementById("onboarding").style.display = "none";
+            document.getElementById("app").style.display = "flex";
+
+            iniciarSistemaOnline();
+        }
+
+        // 2. Sistema Online (PeerJS)
+        function iniciarSistemaOnline() {
+            // Cria uma nova conexão P2P
+            peer = new Peer(); 
+
+            // Quando conectar ao servidor e receber seu próprio código
+            peer.on('open', (id) => {
+                document.getElementById("meuCodigo").innerText = id;
+                mostrarAvisoSistema("Seu código foi gerado! Abra as configurações tocando no seu nome para conectar.");
+            });
+
+            // Quando alguém colocar o SEU código e tentar conectar
+            peer.on('connection', (conexao) => {
+                conexaoAtiva = conexao;
+                configurarRecebimento(conexaoAtiva);
+            });
+        }
+
+        // 3. Conectando a um amigo
+        function conectarComAmigo() {
+            const codigoDestino = document.getElementById("codigoAmigo").value.trim();
+            if(!codigoDestino) return;
+            
+            conexaoAtiva = peer.connect(codigoDestino);
+            configurarRecebimento(conexaoAtiva);
+            fecharConfiguracoes();
+        }
+
+        function configurarRecebimento(conexao) {
+            conexao.on('open', () => {
+                mostrarAvisoSistema("Conectado online com sucesso! Podem conversar.");
+                document.getElementById("inputMensagem").disabled = false;
+                document.getElementById("btnEnviar").disabled = false;
+            });
+
+            conexao.on('data', (dados) => {
+                receberMensagem(dados);
+            });
+            
+            conexao.on('close', () => {
+                mostrarAvisoSistema("O outro usuário desconectou.");
+                document.getElementById("inputMensagem").disabled = true;
+                document.getElementById("btnEnviar").disabled = true;
+            });
+        }
+
+        // 4. Interface (Configurações, Tema e Chat)
+        function abrirConfiguracoes() { document.getElementById("painelConexao").style.display = "block"; }
+        function fecharConfiguracoes() { document.getElementById("painelConexao").style.display = "none"; }
+        function alternarTema() { document.body.classList.toggle("tema-escuro"); }
+        function gerarHorario() { const a = new Date(); return `${a.getHours().toString().padStart(2, '0')}:${a.getMinutes().toString().padStart(2, '0')}`; }
+
+        function sanitizarTexto(texto) {
+            let seguro = texto.substring(0, 1000); 
+            return seguro.replace(/[\u0300-\u036f\u0489]/g, ""); // Anti Trava-zap
+        }
+
+        function enviarMensagem() {
+            if(!conexaoAtiva || !conexaoAtiva.open) return;
+            
+            const input = document.getElementById("inputMensagem");
+            let textoBruto = input.value.trim();
+            if (!textoBruto) return;
+
+            const textoProcessado = sanitizarTexto(textoBruto);
+
+            // Envia para o outro computador
+            conexaoAtiva.send(textoProcessado);
+
+            // Mostra na sua tela
+            renderizarBalao(textoProcessado, "enviada", true);
+            input.value = "";
+        }
+
+        function receberMensagem(texto) {
+            renderizarBalao(texto, "recebida", false);
+        }
+
+        function lidarEnter(event) { if (event.key === "Enter") enviarMensagem(); }
+
+        function renderizarBalao(texto, tipo, temVV) {
+            const chat = document.getElementById("chatArea");
+            const vv = temVV ? `<span class="vv">✓✓</span>` : '';
+            chat.innerHTML += `
+                <div class="balao ${tipo}">
+                    ${texto}
+                    <div class="meta-dados">${gerarHorario()} ${vv}</div>
+                </div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function mostrarAvisoSistema(texto) {
+            const chat = document.getElementById("chatArea");
+            chat.innerHTML += `<div class="balao sistema">${texto}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+</html>
