@@ -205,10 +205,12 @@
         </div>
 
         <div class="input-area">
-            <input type="text" id="inputMensagem" placeholder="Escreva sua mensagem..." onkeypress="lidarEnter(event)">
+            <!-- Novo botão de Emojis/GIFs -->
+            <button onclick="enviarGifOuImagem()" style="background: var(--bg-principal); color: var(--texto-principal); font-size: 1.5em; width: 45px; height: 45px; box-shadow: none; margin-right: 10px; border-radius: 50%;" title="Enviar GIF ou Imagem">🤩</button>
+            
+            <input type="text" id="inputMensagem" placeholder="Escreva sua mensagem... (Win + . para Emojis)" onkeypress="lidarEnter(event)">
             <button onclick="enviarMensagem()">➢</button>
         </div>
-    </div>
 
     <script>
         // Variáveis Principais
