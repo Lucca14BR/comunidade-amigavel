@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comunidade Amigável</title>
-    <!-- Sistema de conexão super estável (MQTT via WebSockets) -->
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
-        /* Design 100% Flat 2D (Sem sombras ou elementos 3D) */
+        /* Design Flat 2D */
         :root {
             --bg-principal: #f4f4f4;
             --bg-chat: #ffffff;
@@ -25,80 +24,72 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-principal); color: var(--texto-principal); }
         
-        /* Containers Principais */
-        .tela { display: none; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto; background-color: var(--bg-chat); border-left: var(--borda); border-right: var(--borda); }
+        .tela { display: none; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto; background-color: var(--bg-chat); border-left: var(--borda); border-right: var(--borda); position: relative; }
         
         /* Onboarding */
         .caixa-padrao { padding: 30px; text-align: center; border: var(--borda); margin: auto; background: var(--bg-chat); width: 90%; }
         .caixa-padrao input { display: block; margin: 15px auto; padding: 10px; border: var(--borda); width: 100%; background: var(--bg-principal); color: var(--texto-principal); outline: none;}
-        
         .btn-acao { padding: 12px 20px; background: var(--cor-tema); color: #fff; border: 2px solid #000; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; }
-        .btn-acao:hover { filter: brightness(0.9); }
-
+        
         /* Cabeçalhos */
         .header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: var(--bg-principal); border-bottom: var(--borda); }
         .avatar { width: 40px; height: 40px; background-color: var(--cor-tema); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; border: 2px solid #000; }
         
-        /* Lista de Contatos */
+        /* Lista e Chat */
         .lista-contatos { flex: 1; overflow-y: auto; padding: 20px; }
-        .contato-item { padding: 15px; border: var(--borda); margin-bottom: 10px; display: flex; align-items: center; gap: 15px; cursor: pointer; background: var(--bg-principal); transition: 0.2s; }
-        .contato-item:hover { background: var(--cor-tema); color: #fff; }
+        .contato-item { padding: 15px; border: var(--borda); margin-bottom: 10px; display: flex; align-items: center; gap: 15px; cursor: pointer; background: var(--bg-principal); }
+        .chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: var(--bg-chat); position: relative; }
         
-        /* Chat */
-        .chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: var(--bg-chat); }
-        .balao { max-width: 80%; padding: 12px; border: 2px solid #000; word-wrap: break-word; color: #fff; font-weight: 500; }
+        /* Balões de Mensagem */
+        .balao { max-width: 80%; padding: 12px; border: 2px solid #000; word-wrap: break-word; color: #fff; font-weight: 500; cursor: pointer; }
         .enviada { background-color: #25d366; align-self: flex-end; }
         .recebida { background-color: #000000; align-self: flex-start; }
         .meta-dados { display: flex; justify-content: flex-end; gap: 5px; font-size: 0.75em; margin-top: 5px; opacity: 0.9; }
-        .vv { color: var(--cor-tema); font-weight: bold; text-shadow: 1px 1px 0 #000; }
+        .vv { color: var(--cor-tema); font-weight: bold; }
 
-        /* Input de Mensagem */
+        /* Respostas e Imagens */
+        .citacao-balao { background: rgba(255,255,255,0.2); padding: 5px; border-left: 3px solid #fff; margin-bottom: 5px; font-size: 0.85em; }
+        .img-chat { max-width: 100%; border: 2px solid #000; margin-top: 5px; display: block; }
+        
+        /* UI de Resposta (Acima do input) */
+        #barraResposta { display: none; padding: 10px; background: var(--bg-principal); border-top: var(--borda); border-bottom: 1px solid #ccc; justify-content: space-between; align-items: center; font-size: 0.9em; }
+        #fecharResposta { cursor: pointer; color: red; font-weight: bold; font-size: 1.2em; border: none; background: none; }
+
+        /* UI Digitando */
+        #indicadorDigitando { font-size: 0.85em; color: gray; margin-left: 10px; display: none; align-self: flex-start; }
+
+        /* Input */
         .input-area { display: flex; padding: 15px; background-color: var(--bg-principal); border-top: var(--borda); }
         .input-area input { flex: 1; padding: 12px; border: var(--borda); background: var(--bg-chat); color: var(--texto-principal); outline: none; }
         .input-area button { background: var(--cor-tema); color: white; border: 2px solid #000; width: 50px; margin-left: 10px; cursor: pointer; font-size: 1.2em; }
-
-        .status { font-size: 0.8em; color: gray; }
-        .online { color: #25d366; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- TELA 1: Cadastro/Login -->
     <div id="tela-onboarding" class="tela" style="display: flex; justify-content: center;">
         <div class="caixa-padrao">
-            <h2 style="margin-bottom: 10px;">Comunidade Amigável</h2>
-            <p style="font-size: 0.9em; margin-bottom: 20px;">Digite seu nome exato. Ele será sua identidade na rede.</p>
+            <h2>Comunidade Amigável</h2>
             <input type="text" id="meuNomeInput" placeholder="Seu Nome">
-            <label style="display: block; margin-top: 10px;">Cor do Perfil:</label>
-            <input type="color" id="minhaCorInput" value="#3498db" style="padding:0; height:40px;">
+            <input type="color" id="minhaCorInput" value="#3498db" style="padding:0; height:40px; margin-top:10px;">
             <button class="btn-acao" style="margin-top: 20px;" onclick="salvarPerfil()">Entrar</button>
         </div>
     </div>
 
-    <!-- TELA 2: Lista de Contatos -->
     <div id="tela-contatos" class="tela">
         <div class="header">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div class="avatar">👤</div>
-                <div>
-                    <h3 id="displayMeuNome">Nome</h3>
-                    <div id="statusConexao" class="status">Conectando...</div>
-                </div>
+                <h3 id="displayMeuNome">Nome</h3>
             </div>
             <button onclick="alternarTema()" style="background:none; border:none; cursor:pointer; font-size: 1.5em;">🌗</button>
         </div>
-        
         <div style="padding: 20px 20px 0 20px;">
             <input type="text" id="novoContatoInput" placeholder="Nome exato do amigo" style="width: 100%; padding: 10px; border: var(--borda); margin-bottom: 10px;">
-            <button class="btn-acao" onclick="adicionarContato()">Adicionar Contato</button>
+            <button class="btn-acao" onclick="adicionarContato()">Adicionar</button>
         </div>
-
-        <div class="lista-contatos" id="listaContatosArea">
-            <!-- Contatos aparecem aqui -->
-        </div>
+        <div class="lista-contatos" id="listaContatosArea"></div>
     </div>
 
-    <!-- TELA 3: Chat Ativo -->
     <div id="tela-chat" class="tela">
         <div class="header">
             <button onclick="voltarParaContatos()" style="background:none; border:none; cursor:pointer; font-size: 1.5em;">🔙</button>
@@ -106,22 +97,29 @@
             <div class="avatar">👤</div>
         </div>
         
-        <div class="chat-area" id="chatArea"></div>
+        <div class="chat-area" id="chatArea">
+            <div id="indicadorDigitando">O contato está digitando...</div>
+        </div>
+
+        <div id="barraResposta">
+            <div>
+                <strong>Respondendo:</strong> <span id="textoRespostaAtiva">...</span>
+            </div>
+            <button id="fecharResposta" onclick="cancelarResposta()">×</button>
+        </div>
 
         <div class="input-area">
-            <input type="text" id="inputMensagem" placeholder="Escreva..." onkeypress="lidarEnter(event)">
+            <input type="text" id="inputMensagem" placeholder="Escreva..." onkeypress="lidarEnter(event)" oninput="avisarDigitacao()">
             <button onclick="enviarMensagem()">➢</button>
         </div>
     </div>
 
     <script>
-        // Variáveis Globais
-        let meuNome = "";
-        let minhaCor = "";
-        let contatos = [];
-        let contatoAtual = "";
-        let topicoAtual = "";
+        let meuNome = "", minhaCor = "", contatos = [], contatoAtual = "", topicoAtual = "";
         let clienteMqtt = null;
+        let mensagemSelecionadaParaResposta = null;
+        let timerDigitando = null;
+        let alertaAba = 0;
 
         // --- INICIALIZAÇÃO ---
         window.onload = () => {
@@ -139,41 +137,41 @@
         function salvarPerfil() {
             meuNome = document.getElementById("meuNomeInput").value.trim();
             minhaCor = document.getElementById("minhaCorInput").value;
-            
-            if (!meuNome) { alert("Digite um nome!"); return; }
-
+            if (!meuNome) return;
             localStorage.setItem("comunidadePerfil", JSON.stringify({ nome: meuNome, cor: minhaCor }));
             document.documentElement.style.setProperty('--cor-tema', minhaCor);
             document.getElementById("displayMeuNome").innerText = meuNome;
-            
             carregarContatos();
             iniciarServidor();
-
             navegarPara("tela-contatos");
         }
 
-        // --- SISTEMA DE CONEXÃO (MQTT Seguro e Anti-Lag) ---
+        // --- SISTEMA MQTT ---
         function iniciarServidor() {
-            // Conecta a um servidor WebSocket público e global, imune a bloqueios de roteador
             clienteMqtt = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
-
-            clienteMqtt.on('connect', () => {
-                document.getElementById("statusConexao").innerHTML = '<span class="online">● Online no Servidor</span>';
-            });
-
             clienteMqtt.on('message', (topic, message) => {
-                // Só processa se estiver na tela do chat correto
                 if (topic === topicoAtual) {
                     const dados = JSON.parse(message.toString());
-                    // Se a mensagem não fui eu que enviei, eu recebo na tela
                     if (dados.remetente !== meuNome) {
-                        renderizarBalao(dados.texto, "recebida", false, dados.horario);
+                        
+                        // Lógica 2: Recebendo aviso de digitação
+                        if(dados.tipo === 'digitando') {
+                            mostrarDigitando(true);
+                        } else if(dados.tipo === 'parou') {
+                            mostrarDigitando(false);
+                        } 
+                        // Lógica normal de recebimento
+                        else if(dados.tipo === 'mensagem') {
+                            mostrarDigitando(false);
+                            renderizarBalao(dados.texto, "recebida", false, dados.horario, dados.resposta);
+                            notificarUsuario(); // Lógica 3: Som e Aba
+                        }
                     }
                 }
             });
         }
 
-        // --- LISTA DE CONTATOS ---
+        // --- CONTATOS E NAVEGAÇÃO ---
         function carregarContatos() {
             const salvos = localStorage.getItem("comunidadeContatos");
             contatos = salvos ? JSON.parse(salvos) : [];
@@ -181,9 +179,9 @@
         }
 
         function adicionarContato() {
-            const nomeAmigo = document.getElementById("novoContatoInput").value.trim();
-            if (nomeAmigo && nomeAmigo !== meuNome && !contatos.includes(nomeAmigo)) {
-                contatos.push(nomeAmigo);
+            const amigo = document.getElementById("novoContatoInput").value.trim();
+            if (amigo && amigo !== meuNome && !contatos.includes(amigo)) {
+                contatos.push(amigo);
                 localStorage.setItem("comunidadeContatos", JSON.stringify(contatos));
                 document.getElementById("novoContatoInput").value = "";
                 renderizarLista();
@@ -191,79 +189,161 @@
         }
 
         function renderizarLista() {
-            const divLista = document.getElementById("listaContatosArea");
-            divLista.innerHTML = "";
-            contatos.forEach(contato => {
-                divLista.innerHTML += `
-                    <div class="contato-item" onclick="abrirChat('${contato}')">
-                        <div class="avatar" style="width: 30px; height: 30px; font-size: 15px;">👤</div>
-                        <strong>${contato}</strong>
-                    </div>
-                `;
-            });
+            const div = document.getElementById("listaContatosArea");
+            div.innerHTML = "";
+            contatos.forEach(c => div.innerHTML += `<div class="contato-item" onclick="abrirChat('${c}')"><strong>${c}</strong></div>`);
         }
 
-        // --- CHAT E MENSAGENS ---
         function abrirChat(amigo) {
             contatoAtual = amigo;
             document.getElementById("nomeContatoAtivo").innerText = amigo;
-            document.getElementById("chatArea").innerHTML = ""; // Limpa a tela
             
-            // Cria um "código de sala" único garantido entre as duas pessoas, ordenando alfabeticamente
-            const participantes = [meuNome, amigo].sort();
-            const novaSala = `comunidade-amigavel/sala/${participantes[0]}_${participantes[1]}`;
+            // Limpa mensagens anteriores mantendo o indicador de digitação oculto
+            document.getElementById("chatArea").innerHTML = `<div id="indicadorDigitando">O contato está digitando...</div>`;
+            cancelarResposta();
+
+            const p = [meuNome, amigo].sort();
+            const novaSala = `comunidade-amigavel/sala/${p[0]}_${p[1]}`;
             
-            // Sai da sala anterior (se houver) e entra na nova
             if (topicoAtual) clienteMqtt.unsubscribe(topicoAtual);
             topicoAtual = novaSala;
             clienteMqtt.subscribe(topicoAtual);
-
             navegarPara("tela-chat");
         }
 
-        function sanitizarTexto(texto) {
-            let seguro = texto.substring(0, 1000); // Bloqueia textos imensos
-            return seguro.replace(/[\u0300-\u036f\u0489]/g, ""); // Anti Trava-zaps
+        // --- FUNÇÃO 4: PROCESSAMENTO DE IMAGENS E TEXTO ---
+        function processarTextoComLinkEImagem(texto) {
+            let seguro = texto.substring(0, 1000).replace(/[\u0300-\u036f\u0489]/g, ""); // Sanitiza
+            
+            // Detecta URLs de imagem e as transforma em tag <img>
+            const regexImg = /(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp))/gi;
+            if (regexImg.test(seguro)) {
+                return seguro.replace(regexImg, `<img src="$1" class="img-chat">`);
+            }
+            return seguro;
         }
 
+        // --- FUNÇÃO 2: DIGITANDO... ---
+        function avisarDigitacao() {
+            if(!clienteMqtt || !clienteMqtt.connected) return;
+            clienteMqtt.publish(topicoAtual, JSON.stringify({ tipo: 'digitando', remetente: meuNome }));
+            
+            clearTimeout(timerDigitando);
+            timerDigitando = setTimeout(() => {
+                clienteMqtt.publish(topicoAtual, JSON.stringify({ tipo: 'parou', remetente: meuNome }));
+            }, 1500);
+        }
+
+        function mostrarDigitando(estado) {
+            const ind = document.getElementById("indicadorDigitando");
+            ind.style.display = estado ? "block" : "none";
+            // Joga o indicador sempre pro fim da lista
+            document.getElementById("chatArea").appendChild(ind);
+        }
+
+        // --- FUNÇÃO 1: RESPOSTA (REPLY) ---
+        function prepararResposta(texto) {
+            // Remove a tag de imagem se estiver respondendo uma foto para não poluir o preview
+            let textoLimpo = texto.replace(/<img[^>]*>/g, "[Imagem]");
+            mensagemSelecionadaParaResposta = textoLimpo;
+            document.getElementById("textoRespostaAtiva").innerText = textoLimpo.substring(0, 30) + "...";
+            document.getElementById("barraResposta").style.display = "flex";
+            document.getElementById("inputMensagem").focus();
+        }
+
+        function cancelarResposta() {
+            mensagemSelecionadaParaResposta = null;
+            document.getElementById("barraResposta").style.display = "none";
+        }
+
+        // --- ENVIO E RENDERIZAÇÃO ---
         function enviarMensagem() {
             const input = document.getElementById("inputMensagem");
             let textoBruto = input.value.trim();
             if (!textoBruto || !clienteMqtt.connected) return;
 
-            const textoProcessado = sanitizarTexto(textoBruto);
-            const horarioAtual = gerarHorario();
+            const textoFinal = processarTextoComLinkEImagem(textoBruto);
+            const horario = gerarHorario();
 
-            // Envia para o servidor
             const payload = JSON.stringify({
+                tipo: 'mensagem',
                 remetente: meuNome,
-                texto: textoProcessado,
-                horario: horarioAtual
+                texto: textoFinal,
+                horario: horario,
+                resposta: mensagemSelecionadaParaResposta
             });
+            
             clienteMqtt.publish(topicoAtual, payload);
-
-            // Renderiza na própria tela
-            renderizarBalao(textoProcessado, "enviada", true, horarioAtual);
+            renderizarBalao(textoFinal, "enviada", true, horario, mensagemSelecionadaParaResposta);
+            
             input.value = "";
+            cancelarResposta();
+            clienteMqtt.publish(topicoAtual, JSON.stringify({ tipo: 'parou', remetente: meuNome }));
         }
 
-        function renderizarBalao(texto, tipo, temVV, horario) {
+        function renderizarBalao(texto, tipo, temVV, horario, repostaOriginal) {
             const chat = document.getElementById("chatArea");
             const vv = temVV ? `<span class="vv">✓✓</span>` : '';
-            chat.innerHTML += `
-                <div class="balao ${tipo}">
+            
+            let htmlResposta = "";
+            if (repostaOriginal) {
+                htmlResposta = `<div class="citacao-balao">${repostaOriginal}</div>`;
+            }
+
+            // O balão agora tem um onclick para ativar a Função 1
+            const htmlBalao = `
+                <div class="balao ${tipo}" onclick="prepararResposta('${texto.replace(/'/g, "\\'")}')">
+                    ${htmlResposta}
                     ${texto}
                     <div class="meta-dados">${horario} ${vv}</div>
                 </div>`;
-            chat.scrollTop = chat.scrollHeight; // Rola pra baixo
+            
+            const ind = document.getElementById("indicadorDigitando");
+            chat.insertBefore(document.createRange().createContextualFragment(htmlBalao), ind);
+            chat.scrollTop = chat.scrollHeight;
         }
 
+        // --- FUNÇÃO 3: NOTIFICAÇÕES (SOM E ABA) ---
+        // Cria som usando a própria placa de som do navegador (Zero lag, zero arquivos baixados)
+        function notificarUsuario() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.1);
+            } catch (e) { /* Ignora se o navegador bloquear */ }
+
+            // Lógica da Aba
+            if (document.hidden) {
+                alertaAba++;
+                document.title = `(${alertaAba}) Nova mensagem!`;
+            }
+        }
+
+        // Quando o usuário volta para a aba, reseta o título
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) {
+                alertaAba = 0;
+                document.title = "Comunidade Amigável";
+            }
+        });
+
         // --- UTILITÁRIOS ---
-        function lidarEnter(event) { if (event.key === "Enter") enviarMensagem(); }
+        function lidarEnter(e) { if (e.key === "Enter") enviarMensagem(); }
         function gerarHorario() { const a = new Date(); return `${a.getHours().toString().padStart(2, '0')}:${a.getMinutes().toString().padStart(2, '0')}`; }
         function alternarTema() { document.body.classList.toggle("tema-escuro"); }
         function voltarParaContatos() { navegarPara("tela-contatos"); }
-        
         function navegarPara(idTela) {
             document.querySelectorAll(".tela").forEach(t => t.style.display = "none");
             document.getElementById(idTela).style.display = "flex";
