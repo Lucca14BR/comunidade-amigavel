@@ -22,12 +22,22 @@
             --sombra-flat: 0px 4px 0px rgba(0,0,0,0.4);
         }
         
+        /* Tema Hacker/Terminal */
+        .tema-hacker {
+            --bg-principal: #000000 !important; --bg-chat: #050505 !important;
+            --texto-principal: #00ff00 !important; --cor-tema: #00ff00 !important;
+            --sombra-flat: none !important; --borda-raio: 0px !important;
+            --fonte-padrao: 'Courier New', Courier, monospace !important;
+        }
+        .tema-hacker * { box-shadow: none !important; border-color: #00ff00 !important; }
+        .tema-hacker .balao { background: transparent !important; border: 1px solid #00ff00 !important; color: #00ff00 !important; }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--fonte-padrao); }
         body { background-color: var(--bg-principal); color: var(--texto-principal); transition: 0.3s; overflow: hidden; }
         
         .tela { display: none; flex-direction: column; height: 100vh; max-width: 600px; margin: 0 auto; background-color: var(--bg-chat); position: relative; }
         
-        /* Botões e Inputs Padrões */
+        /* UI Básica */
         .caixa-padrao { padding: 35px; text-align: center; margin: auto; width: 90%; }
         .input-bonito { display: block; margin: 10px auto; padding: 15px; width: 100%; background: var(--bg-principal); color: var(--texto-principal); border: none; border-radius: var(--borda-raio-pequeno); outline: none; font-size: 1rem; }
         .btn-acao { padding: 15px 20px; background: var(--cor-tema); color: #fff; border: none; border-radius: var(--borda-raio); cursor: pointer; font-weight: bold; width: 100%; font-size: 1rem; box-shadow: var(--sombra-flat); transition: 0.2s; }
@@ -40,11 +50,12 @@
         .lista-contatos { flex: 1; overflow-y: auto; padding: 15px; }
         .contato-item { padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; background: var(--bg-principal); border-radius: var(--borda-raio); font-weight: bold; box-shadow: var(--sombra-flat); }
 
-        /* Área do Chat e Balões */
+        /* Área do Chat */
         .chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; position: relative; }
         .balao-container { display: flex; flex-direction: column; max-width: 80%; position: relative; }
         .balao-container.enviada { align-self: flex-end; }
         .balao-container.recebida { align-self: flex-start; }
+        .balao-container.sistema { align-self: center; max-width: 95%; }
         
         .balao { padding: 14px 18px; word-wrap: break-word; color: #fff; font-weight: 500; cursor: pointer; border-radius: 20px; box-shadow: var(--sombra-flat); position: relative; }
         .enviada .balao { background-color: var(--cor-tema); border-bottom-right-radius: 0px; }
@@ -55,52 +66,56 @@
         .reacoes-display { position: absolute; bottom: -10px; right: 10px; background: var(--bg-principal); border-radius: 10px; padding: 2px 5px; font-size: 0.8em; display: none; box-shadow: var(--sombra-flat); }
         .bomba-timer { color: #ff4757; font-weight: bold; margin-left: 5px; background: #fff; padding: 2px 6px; border-radius: 5px; }
         
-        .balao-sistema { align-self: center; background: transparent; color: var(--texto-principal); border: 2px solid var(--cor-tema); border-radius: var(--borda-raio); font-size: 0.9em; font-weight: bold; padding: 15px; max-width: 90%; text-align: center; }
-
+        /* Modificadores Visuais */
+        .balao-sistema { background: transparent; color: var(--texto-principal); border: 2px solid var(--cor-tema); border-radius: var(--borda-raio); font-size: 0.9em; font-weight: bold; padding: 15px; text-align: center; cursor: default; }
+        .sticker-img { font-size: 4.5rem; line-height: 1; background: transparent !important; box-shadow: none !important; cursor: pointer; padding: 0;}
+        
         /* Menu de Ações (Reagir / Apagar) */
         #menuAcoes { display: none; position: absolute; background: var(--bg-chat); border: 2px solid var(--bg-principal); border-radius: var(--borda-raio); padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100; gap: 10px; flex-direction: row; }
         .btn-acao-mini { background: var(--bg-principal); border: none; border-radius: 10px; padding: 10px; font-size: 1.2em; cursor: pointer; }
+
+        /* Painel Stickers e Comandos */
+        #painelStickers { display: none; padding: 15px; background: var(--bg-principal); gap: 10px; flex-wrap: wrap; justify-content: center; border-top-left-radius: 20px; border-top-right-radius: 20px; }
+        .sticker-btn { font-size: 2.2rem; background: var(--bg-chat); border: none; border-radius: 15px; padding: 10px; cursor: pointer; box-shadow: var(--sombra-flat); }
+        #painelComandos { display: none; position: absolute; bottom: 80px; left: 15px; right: 15px; background: var(--bg-chat); border: 2px solid var(--bg-principal); border-radius: var(--borda-raio-pequeno); max-height: 200px; overflow-y: auto; z-index: 100; }
+        .comando-item { padding: 12px 15px; border-bottom: 2px solid var(--bg-principal); cursor: pointer; font-size: 0.9em; }
+        .comando-item b { color: var(--cor-tema); }
 
         /* TELA DE JOGOS 2D INTERATIVA */
         #tela-jogo-layer { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-principal); z-index: 200; flex-direction: column; align-items: center; justify-content: center; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .btn-fechar-jogo { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; background: #ff4757; color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; box-shadow: var(--sombra-flat); }
-        
-        /* Jogo da Velha UI */
         .grid-velha { display: grid; grid-template-columns: repeat(3, 90px); gap: 10px; margin-top: 30px; }
         .celula-velha { width: 90px; height: 90px; font-size: 3rem; background: var(--bg-chat); border-radius: 15px; border: none; cursor: pointer; box-shadow: var(--sombra-flat); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--texto-principal);}
         
-        /* Área de Input e Comandos */
+        /* Área de Input */
         .input-area { display: flex; padding: 15px; background-color: var(--bg-chat); gap: 10px; border-top: 2px solid var(--bg-principal);}
         .input-area input { flex: 1; padding: 15px; border: none; background: var(--bg-principal); color: var(--texto-principal); border-radius: 30px; outline: none; }
         .input-area button { background: var(--cor-tema); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2em; box-shadow: var(--sombra-flat); }
-
-        #painelComandos { display: none; position: absolute; bottom: 80px; left: 15px; right: 15px; background: var(--bg-chat); border: 2px solid var(--bg-principal); border-radius: var(--borda-raio-pequeno); max-height: 200px; overflow-y: auto; z-index: 100; }
-        .comando-item { padding: 12px 15px; border-bottom: 2px solid var(--bg-principal); cursor: pointer; font-size: 0.9em; }
-        .comando-item b { color: var(--cor-tema); }
     </style>
 </head>
 <body>
 
-    <!-- Onboarding -->
+    <!-- 1. TELA ONBOARDING -->
     <div id="tela-onboarding" class="tela" style="display: flex; justify-content: center;">
         <div class="caixa-padrao">
             <h1 style="margin-bottom: 20px;">Comunidade Amigável</h1>
             <input type="text" id="setupNome" class="input-bonito" placeholder="Seu Nome de Exibição">
-            <input type="text" id="setupID" class="input-bonito" placeholder="ID Único (Ex: user123)" style="text-transform: lowercase;">
+            <input type="text" id="setupID" class="input-bonito" placeholder="ID Único (Ex: dev123)" style="text-transform: lowercase;">
             <input type="color" id="setupCor" value="#3498db" style="width:100%; height:50px; border:none; border-radius:10px; margin-bottom: 20px; cursor: pointer;">
             <button class="btn-acao" onclick="criarPerfil()">Entrar na Rede</button>
         </div>
     </div>
 
-    <!-- Contatos -->
+    <!-- 2. TELA CONTATOS -->
     <div id="tela-contatos" class="tela">
         <div class="header">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="avatar">👤</div>
                 <div><h3 id="displayMeuNome">Nome</h3><small id="displayMeuID">@id</small></div>
             </div>
-            <button class="btn-icone" onclick="alternarTema()">🌗</button>
+            <!-- CONFIGURAÇÕES DE VOLTA -->
+            <button class="btn-icone" onclick="abrirConfiguracoes()">⚙️</button>
         </div>
         <div style="padding: 20px;">
             <input type="text" id="novoContatoInput" class="input-bonito" placeholder="Digite o @ID do amigo para adicionar">
@@ -109,7 +124,30 @@
         <div class="lista-contatos" id="listaContatosArea"></div>
     </div>
 
-    <!-- Chat -->
+    <!-- 3. TELA CONFIGURAÇÕES (RESTAURADA) -->
+    <div id="tela-configuracoes" class="tela">
+        <div class="header">
+            <button class="btn-icone" onclick="fecharConfiguracoes()">🔙</button>
+            <h3>Configurações</h3>
+            <div style="width: 45px;"></div>
+        </div>
+        <div style="padding: 30px; overflow-y: auto;">
+            <label style="font-weight: bold;">Nome de Exibição:</label>
+            <input type="text" id="configNome" class="input-bonito">
+            <label style="font-weight: bold;">Seu ID Único (@):</label>
+            <input type="text" id="configID" class="input-bonito" style="text-transform: lowercase;">
+            <div id="mensagemAvisoID" style="color: red; font-size: 0.85em; font-weight: bold; margin-bottom: 10px;"></div>
+            <label style="font-weight: bold;">Cor do Tema:</label>
+            <input type="color" id="configCor" style="width:100%; height:50px; border:none; border-radius: 10px; margin: 10px 0 20px 0; cursor:pointer;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 15px; background: var(--bg-principal); border-radius: var(--borda-raio-pequeno);">
+                <strong>Modo Escuro</strong>
+                <button class="btn-icone" onclick="alternarTema()">🌗</button>
+            </div>
+            <button class="btn-acao" onclick="salvarConfiguracoes()" id="btnSalvarConfig">Salvar Alterações</button>
+        </div>
+    </div>
+
+    <!-- 4. TELA CHAT & JOGOS -->
     <div id="tela-chat" class="tela">
         <div class="header">
             <button class="btn-icone" onclick="voltarParaContatos()">🔙</button>
@@ -128,9 +166,21 @@
             <button class="btn-acao-mini" onclick="apagarMensagemSelecionada()" style="color: red;">🗑️</button>
         </div>
 
+        <!-- Painel Auto-Completar -->
         <div id="painelComandos"></div>
+        
+        <!-- FIGURINHAS DE VOLTA -->
+        <div id="painelStickers">
+            <button class="sticker-btn" onclick="enviarMsgRapida('sticker', '🦫')">🦫</button>
+            <button class="sticker-btn" onclick="enviarMsgRapida('sticker', '♟️')">♟️</button>
+            <button class="sticker-btn" onclick="enviarMsgRapida('sticker', '🎮')">🎮</button>
+            <button class="sticker-btn" onclick="enviarMsgRapida('sticker', '💻')">💻</button>
+            <button class="sticker-btn" onclick="enviarMsgRapida('sticker', '😎')">😎</button>
+            <button class="sticker-btn" onclick="enviarMsgRapida('sticker', '💀')">💀</button>
+        </div>
 
         <div class="input-area">
+            <button onclick="toggleStickers()" style="background: var(--bg-principal); color: var(--texto-principal); box-shadow: none;" title="Figurinhas">🌠</button>
             <input type="text" id="inputMensagem" placeholder="Digite... (/ para comandos)" oninput="monitorarComandos()" onkeypress="lidarEnter(event)">
             <button onclick="processarEnvio()">➢</button>
         </div>
@@ -145,39 +195,48 @@
     </div>
 
     <script>
+        // Variáveis de Estado
         let perfil = { nome: "", id: "", cor: "#3498db", escuro: false };
         let contatos = [], historico = {}, clienteMqtt = null, contatoAtualID = "";
-        let idMsgSelecionada = null; // Para ações de menu
+        let idMsgSelecionada = null, avisosID = 0, idOriginal = "";
         
-        // --- MOTOR DE JOGOS ---
-        let jogoAtivo = null;
-        let estadoJogo = [];
-        let meuTurnoJogo = false;
-        let meuSimbolo = "";
+        // Estado Motor Jogos 2D
+        let jogoAtivo = null, estadoJogo = [], meuTurnoJogo = false, meuSimbolo = "";
 
+        // TODOS OS COMANDOS (Texto + Interativos + Utilitários)
         const cmds = [
-            { cmd: '/bomba', desc: '💣 Envia mensagem que se apaga (Ex: /bomba 10 Segredo)' },
+            { cmd: '/bomba', desc: '💣 Msg que se apaga (Ex: /bomba 10 Segredo)' },
             { cmd: '/velha', desc: '🎮 Convida para o Jogo da Velha 2D' },
-            { cmd: '/clique', desc: '🖱️ Convida para o Teste de Cliques' }
+            { cmd: '/slot', desc: '🎰 Gira um Caça-níqueis' },
+            { cmd: '/ppt', desc: '✂️ Joga Pedra, Papel, Tesoura' },
+            { cmd: '/moeda', desc: '🪙 Joga Cara ou Coroa' },
+            { cmd: '/roll', desc: '🎲 Rola um dado (Ex: /roll 20)' },
+            { cmd: '/cartas', desc: '🃏 Puxa uma carta do baralho' },
+            { cmd: '/roleta', desc: '🎡 Gira a roleta do cassino' },
+            { cmd: '/bingo', desc: '🎱 Sorteia uma bola de bingo' },
+            { cmd: '/bola8', desc: '🔮 Responde à sua pergunta' },
+            { cmd: '/hacker', desc: '💻 Ativa o modo Terminal Escuro' }
         ];
 
+        // --- INICIALIZAÇÃO ---
         window.onload = () => {
+            if(localStorage.getItem("CA_Contatos")) contatos = JSON.parse(localStorage.getItem("CA_Contatos"));
             if(localStorage.getItem("CA_Perfil")) {
                 perfil = JSON.parse(localStorage.getItem("CA_Perfil"));
-                if (localStorage.getItem("CA_Contatos")) contatos = JSON.parse(localStorage.getItem("CA_Contatos"));
                 aplicarEstilos(); iniciarMQTT(); navegarPara("tela-contatos");
             } else navegarPara("tela-onboarding");
         };
 
+        // --- GESTÃO DE PERFIL E CONFIGURAÇÕES ---
+        function formatarID(t) { return t.toLowerCase().replace(/[^a-z0-9_]/g, ''); }
         function criarPerfil() {
             const n = document.getElementById("setupNome").value.trim();
-            const i = document.getElementById("setupID").value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+            const i = formatarID(document.getElementById("setupID").value);
             if(!n || !i) return;
             perfil = { nome: n, id: i, cor: document.getElementById("setupCor").value, escuro: false };
             localStorage.setItem("CA_Perfil", JSON.stringify(perfil));
             aplicarEstilos(); iniciarMQTT(); navegarPara("tela-contatos");
         }
-
         function aplicarEstilos() {
             document.documentElement.style.setProperty('--cor-tema', perfil.cor);
             document.body.classList.toggle("tema-escuro", perfil.escuro);
@@ -187,6 +246,37 @@
         }
         function alternarTema() { perfil.escuro = !perfil.escuro; localStorage.setItem("CA_Perfil", JSON.stringify(perfil)); aplicarEstilos(); }
 
+        // Lógica Restaurada de Configurações
+        function abrirConfiguracoes() {
+            document.getElementById("configNome").value = perfil.nome; document.getElementById("configID").value = perfil.id;
+            document.getElementById("configCor").value = perfil.cor; idOriginal = perfil.id; avisosID = 0;
+            document.getElementById("mensagemAvisoID").innerText = ""; document.getElementById("btnSalvarConfig").innerText = "Salvar Alterações";
+            navegarPara("tela-configuracoes");
+        }
+        function fecharConfiguracoes() { navegarPara("tela-contatos"); }
+        
+        function salvarConfiguracoes() {
+            const n = document.getElementById("configNome").value.trim(); const i = formatarID(document.getElementById("configID").value);
+            if(!n || !i) return;
+            if (i === idOriginal) { efetivarSalvamento(n, i, document.getElementById("configCor").value); return; }
+            
+            const avisoBox = document.getElementById("mensagemAvisoID"); const btn = document.getElementById("btnSalvarConfig");
+            if (avisosID === 0) { avisoBox.innerText = "Aviso 1/2: Mudar ID limpa você da lista dos amigos."; avisosID = 1; btn.innerText = "Confirmar Aviso"; }
+            else if (avisosID === 1) { avisoBox.innerText = "Aviso 2/2: Confirmar varredura na rede."; avisosID = 2; btn.innerText = "Verificar e Salvar"; }
+            else if (avisosID === 2) {
+                avisoBox.innerText = "Verificando se o ID está livre...";
+                verificarIDLivre(i, (livre) => {
+                    if (livre) efetivarSalvamento(n, i, document.getElementById("configCor").value);
+                    else { avisoBox.innerText = "ERRO: ID já em uso!"; avisosID = 0; btn.innerText = "Salvar Alterações"; }
+                });
+            }
+        }
+        function efetivarSalvamento(n, i, c) {
+            if (i !== perfil.id && clienteMqtt) { clienteMqtt.unsubscribe(`comun/inbox/${perfil.id}`); clienteMqtt.subscribe(`comun/inbox/${i}`); }
+            perfil = { nome: n, id: i, cor: c, escuro: perfil.escuro };
+            localStorage.setItem("CA_Perfil", JSON.stringify(perfil)); aplicarEstilos(); fecharConfiguracoes();
+        }
+
         // --- SISTEMA MQTT CORE ---
         function iniciarMQTT() {
             if(clienteMqtt) clienteMqtt.end();
@@ -195,247 +285,151 @@
 
             clienteMqtt.on('message', (topic, message) => {
                 const msg = JSON.parse(message.toString());
+                if (msg.tipo === 'ping_check') { clienteMqtt.publish(`comunidade/inbox/${msg.remetente}`, JSON.stringify({ tipo: 'pong_check' })); return; }
+                
                 const rID = msg.remetenteID;
-
                 if (!contatos.find(c => c.id === rID) && rID !== perfil.id && rID) {
                     contatos.push({ id: rID, nome: msg.remetenteNome || rID });
                     localStorage.setItem("CA_Contatos", JSON.stringify(contatos)); renderizarContatos();
                 }
 
-                // Sistema de Sincronização de Jogos
-                if (msg.tipo === 'convite_jogo') renderizarBalaoJogo(msg, false);
+                // Sincronização de Jogos 2D
+                if (msg.tipo === 'convite_jogo') renderizarBalaoMaster(msg, false);
                 if (msg.tipo === 'aceitou_jogo') iniciarMotorJogo(msg.jogo, false);
                 if (msg.tipo === 'jogada_sync') processarJogada(msg.dados);
                 if (msg.tipo === 'encerrar_jogo') encerrarJogoRecebido();
 
-                // Sistema de Ações e Mensagens
-                if (msg.tipo === 'mensagem' || msg.tipo === 'bomba') renderizarBalao(msg, false);
+                // Mensagens, Ações e RPG Textual
+                if (['mensagem', 'bomba', 'rpg', 'sticker'].includes(msg.tipo)) renderizarBalaoMaster(msg, false);
                 if (msg.tipo === 'reacao') aplicarReacaoVisual(msg.idMsg, msg.emoji);
                 if (msg.tipo === 'apagar') removerMensagemVisual(msg.idMsg);
             });
         }
+        function verificarIDLivre(idTestado, cb) {
+            const h = (t, m) => { if (JSON.parse(m.toString()).tipo === 'pong_check') { clearTimeout(to); clienteMqtt.removeListener('message', h); cb(false); } };
+            clienteMqtt.on('message', h); clienteMqtt.publish(`comunidade/inbox/${idTestado}`, JSON.stringify({ tipo: 'ping_check', remetente: perfil.id }));
+            const to = setTimeout(() => { clienteMqtt.removeListener('message', h); cb(true); }, 1500);
+        }
 
         function adicionarContatoManual() {
-            const i = document.getElementById("novoContatoInput").value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+            const i = formatarID(document.getElementById("novoContatoInput").value);
             if (i && i !== perfil.id && !contatos.find(c => c.id === i)) {
                 contatos.push({ id: i, nome: i }); localStorage.setItem("CA_Contatos", JSON.stringify(contatos));
                 document.getElementById("novoContatoInput").value = ""; renderizarContatos();
                 if(clienteMqtt) clienteMqtt.publish(`comunidade/inbox/${i}`, JSON.stringify({ tipo: 'ping', remetenteID: perfil.id, remetenteNome: perfil.nome }));
             }
         }
-
         function renderizarContatos() {
             const div = document.getElementById("listaContatosArea"); div.innerHTML = "";
-            contatos.forEach(c => div.innerHTML += `<div class="contato-item" onclick="abrirChat('${c.id}', '${c.nome}')"><div class="avatar">👤</div><div>${c.nome}</div></div>`);
+            contatos.forEach(c => div.innerHTML += `<div class="contato-item" onclick="abrirChat('${c.id}', '${c.nome}')"><div class="avatar">👤</div><div>${c.nome} <br><small style="font-weight:normal; opacity:0.6;">@${c.id}</small></div></div>`);
         }
-
         function abrirChat(id, nome) {
             contatoAtualID = id; document.getElementById("nomeContatoAtivo").innerText = nome;
             document.getElementById("chatArea").innerHTML = ""; document.getElementById("menuAcoes").style.display = 'none';
             navegarPara("tela-chat");
         }
 
-        // --- SISTEMA DE COMANDOS E ENVIO ---
+        // --- SISTEMA DE COMANDOS (RPG / Bomba / 2D) ---
+        function toggleStickers() { const p = document.getElementById("painelStickers"); p.style.display = p.style.display === "flex" ? "none" : "flex"; }
         function monitorarComandos() {
-            const txt = document.getElementById("inputMensagem").value.toLowerCase();
-            const p = document.getElementById("painelComandos");
+            const txt = document.getElementById("inputMensagem").value.toLowerCase(); const p = document.getElementById("painelComandos");
             if (txt.startsWith('/')) {
                 const f = cmds.filter(c => c.cmd.startsWith(txt) || txt === '/');
-                if (f.length > 0) {
-                    p.style.display = 'block';
-                    p.innerHTML = f.map(c => `<div class="comando-item" onclick="selecionarCmd('${c.cmd}')"><b>${c.cmd}</b> ${c.desc}</div>`).join('');
-                } else p.style.display = 'none';
+                if (f.length > 0) p.innerHTML = f.map(c => `<div class="comando-item" onclick="selecionarCmd('${c.cmd}')"><b>${c.cmd}</b> ${c.desc}</div>`).join(''), p.style.display = 'block';
+                else p.style.display = 'none';
             } else p.style.display = 'none';
         }
-        function selecionarCmd(c) { document.getElementById("inputMensagem").value = c + ' '; document.getElementById("painelComandos").style.display = 'none'; document.getElementById("inputMensagem").focus(); }
+        function selecionarCmd(c) { document.getElementById("inputMensagem").value = c + (c==='/bomba'||c==='/bola8'?' ':''); document.getElementById("painelComandos").style.display = 'none'; document.getElementById("inputMensagem").focus(); }
 
         function processarEnvio() {
-            const input = document.getElementById("inputMensagem");
-            let txt = input.value.trim();
+            const input = document.getElementById("inputMensagem"); let txt = input.value.trim();
             if (!txt || !clienteMqtt.connected) return;
-            document.getElementById("painelComandos").style.display = 'none';
+            document.getElementById("painelComandos").style.display = 'none'; document.getElementById("painelStickers").style.display = "none";
+            
+            const cmd = txt.toLowerCase();
+            if (cmd === '/hacker' || cmd === '/kali') { document.body.classList.toggle('tema-hacker'); input.value = ""; return; }
 
-            const idMsgUnico = Date.now().toString(36) + Math.random().toString(36).substr(2);
-            let msgObj = { idMsg: idMsgUnico, remetenteID: perfil.id, remetenteNome: perfil.nome, horario: gerarHorario() };
+            // Comandos RPG
+            if (cmd.startsWith('/roll')) return enviarMsgRapida('rpg', `🎲 Rolou um dado: ${Math.floor(Math.random() * (parseInt(cmd.replace(/[^0-9]/g, ''))||6)) + 1}`);
+            if (cmd === '/moeda') return enviarMsgRapida('rpg', `🪙 Caiu: ${Math.random() > 0.5 ? "Cara" : "Coroa"}`);
+            if (cmd === '/ppt') return enviarMsgRapida('rpg', `jokenpô! Tirou: ${['🪨 Pedra', '📄 Papel', '✂️ Tesoura'][Math.floor(Math.random()*3)]}`);
+            if (cmd === '/bingo') return enviarMsgRapida('rpg', `🎱 Sorteou: ${['B','I','N','G','O'][Math.floor(Math.random()*5)]}-${Math.floor(Math.random()*75)+1}`);
+            if (cmd === '/cartas') return enviarMsgRapida('rpg', `🃏 Puxou: ${['Ás','2','3','4','5','6','7','8','9','10','Valete','Dama','Rei'][Math.floor(Math.random()*13)]} de ${['♠️ Espadas','♥️ Copas','♣️ Paus','♦️ Ouros'][Math.floor(Math.random()*4)]}`);
+            if (cmd === '/roleta') { const n = Math.floor(Math.random() * 37); return enviarMsgRapida('rpg', `🎡 A roleta parou em: ${n} (${n===0?'🟢':n%2===0?'🔴':'⚫'})`); }
+            if (cmd === '/slot') { const i=['🍒','🍋','🍇','💎']; const s=[i[Math.floor(Math.random()*4)],i[Math.floor(Math.random()*4)],i[Math.floor(Math.random()*4)]]; return enviarMsgRapida('rpg', `Caça-Níqueis: [ ${s[0]} | ${s[1]} | ${s[2]} ] ${(s[0]===s[1] && s[1]===s[2])?'🎰 JACKPOT!':''}`); }
+
+            // Lógica Padrão / Bomba / 2D
+            let msgObj = { idMsg: Date.now().toString(36) + Math.random().toString(36).substr(2), remetenteID: perfil.id, remetenteNome: perfil.nome, horario: gerarHorario() };
 
             if (txt.startsWith('/bomba ')) {
-                const partes = txt.split(' ');
-                const tempo = parseInt(partes[1]);
-                if(isNaN(tempo)) return alert("Use: /bomba [segundos] [mensagem]");
-                msgObj.tipo = 'bomba'; msgObj.tempo = tempo; msgObj.texto = txt.substring(partes[0].length + partes[1].length + 2);
+                const p = txt.split(' '); const t = parseInt(p[1]); if(isNaN(t)) return alert("Use: /bomba [segundos] [mensagem]");
+                msgObj.tipo = 'bomba'; msgObj.tempo = t; msgObj.texto = txt.substring(p[0].length + p[1].length + 2);
             } 
-            else if (txt === '/velha' || txt === '/clique') {
-                const j = txt.substring(1);
-                msgObj.tipo = 'convite_jogo'; msgObj.jogo = j; msgObj.texto = `Convite para jogar: ${j.toUpperCase()}`;
-            } 
-            else {
-                msgObj.tipo = 'mensagem'; msgObj.texto = txt;
-            }
+            else if (txt === '/velha') { msgObj.tipo = 'convite_jogo'; msgObj.jogo = 'velha'; msgObj.texto = `Convite para jogar: VELHA`; } 
+            else { msgObj.tipo = 'mensagem'; msgObj.texto = txt; }
 
             clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify(msgObj));
-            
-            if (msgObj.tipo === 'convite_jogo') renderizarBalaoJogo(msgObj, true);
-            else renderizarBalao(msgObj, true);
-            
-            input.value = "";
+            renderizarBalaoMaster(msgObj, true); input.value = "";
+        }
+        
+        function enviarMsgRapida(tipo, texto) {
+            const msgObj = { idMsg: Date.now().toString(36) + Math.random().toString(36).substr(2), remetenteID: perfil.id, remetenteNome: perfil.nome, horario: gerarHorario(), tipo: tipo, texto: texto };
+            clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify(msgObj));
+            renderizarBalaoMaster(msgObj, true); document.getElementById("inputMensagem").value = ""; document.getElementById("painelStickers").style.display = "none";
         }
 
-        // --- RENDERIZAÇÃO E AÇÕES (REAGIR/APAGAR/BOMBA) ---
-        function renderizarBalao(msg, souEu) {
-            const div = document.createElement("div");
-            div.className = `balao-container ${souEu ? 'enviada' : 'recebida'}`;
-            div.id = `msg_${msg.idMsg}`;
-            
-            let htmlInner = `<div class="balao" onclick="abrirMenuAcoes('${msg.idMsg}', event)">${msg.texto}`;
-            
-            // Sistema de Bomba Autodestrutiva
-            if (msg.tipo === 'bomba') {
-                htmlInner += `<span class="bomba-timer" id="timer_${msg.idMsg}">${msg.tempo}s</span>`;
-                iniciarTimerBomba(msg.idMsg, msg.tempo);
+        // --- RENDERIZAÇÃO MESTRE & AÇÕES ---
+        function renderizarBalaoMaster(msg, souEu) {
+            const div = document.createElement("div"); div.id = `msg_${msg.idMsg}`;
+            let htmlInner = "";
+
+            if (msg.tipo === 'convite_jogo') {
+                div.className = "balao-container sistema";
+                htmlInner = `<div class="balao-sistema">` + (souEu ? `Você convidou para <b>${msg.jogo.toUpperCase()}</b>. Aguardando...` : `🎮 <b>${msg.remetenteNome}</b> convidou para <b>${msg.jogo.toUpperCase()}</b>!<br><button class="btn-acao" style="margin-top:10px; padding:10px;" onclick="aceitarJogo('${msg.jogo}')">🕹️ Aceitar e Jogar</button>`) + `</div>`;
+            } 
+            else if (msg.tipo === 'rpg') {
+                div.className = "balao-container sistema";
+                htmlInner = `<div class="balao-sistema"><strong>${msg.remetenteNome}</strong> ${msg.texto}</div>`;
             }
-
-            htmlInner += `<div class="meta-dados">${msg.horario} ${souEu ? '<span class="vv">✓✓</span>' : ''}</div>
-                          <div class="reacoes-display" id="reacao_${msg.idMsg}"></div></div>`;
-            div.innerHTML = htmlInner;
-            
-            document.getElementById("chatArea").appendChild(div);
-            document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
+            else {
+                div.className = `balao-container ${souEu ? 'enviada' : 'recebida'}`;
+                htmlInner = `<div class="balao ${msg.tipo === 'sticker' ? 'sticker-img' : ''}" onclick="abrirMenuAcoes('${msg.idMsg}', event)">${msg.texto}`;
+                if (msg.tipo === 'bomba') { htmlInner += `<span class="bomba-timer" id="timer_${msg.idMsg}">${msg.tempo}s</span>`; iniciarTimerBomba(msg.idMsg, msg.tempo); }
+                htmlInner += `<div class="meta-dados">${msg.horario} ${souEu && msg.tipo !== 'sticker' ? '<span class="vv">✓✓</span>' : ''}</div><div class="reacoes-display" id="reacao_${msg.idMsg}"></div></div>`;
+            }
+            div.innerHTML = htmlInner; document.getElementById("chatArea").appendChild(div); document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
         }
 
-        function iniciarTimerBomba(idMsg, tempoRestante) {
-            const timer = setInterval(() => {
-                tempoRestante--;
-                const el = document.getElementById(`timer_${idMsg}`);
-                if (el) el.innerText = `${tempoRestante}s`;
-                if (tempoRestante <= 0) {
-                    clearInterval(timer);
-                    removerMensagemVisual(idMsg); // Explodiu! Apaga da tela.
-                }
-            }, 1000);
-        }
-
-        function abrirMenuAcoes(idMsg, event) {
-            idMsgSelecionada = idMsg;
-            const menu = document.getElementById("menuAcoes");
-            menu.style.display = "flex";
-            // Posiciona perto do clique
-            menu.style.left = Math.min(event.pageX - 20, window.innerWidth - 180) + 'px';
-            menu.style.top = (event.pageY - 60) + 'px';
-        }
-
-        // Esconde menu ao clicar fora
+        function iniciarTimerBomba(idMsg, t) { const tmr = setInterval(() => { t--; const el = document.getElementById(`timer_${idMsg}`); if (el) el.innerText = `${t}s`; if (t <= 0) { clearInterval(tmr); removerMensagemVisual(idMsg); } }, 1000); }
+        
+        function abrirMenuAcoes(idMsg, ev) { idMsgSelecionada = idMsg; const m = document.getElementById("menuAcoes"); m.style.display = "flex"; m.style.left = Math.min(ev.pageX - 20, window.innerWidth - 180) + 'px'; m.style.top = (ev.pageY - 60) + 'px'; }
         document.addEventListener('click', (e) => { if(!e.target.closest('.balao') && !e.target.closest('#menuAcoes')) document.getElementById("menuAcoes").style.display = "none"; });
 
-        function enviarReacao(emoji) {
-            aplicarReacaoVisual(idMsgSelecionada, emoji);
-            clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'reacao', idMsg: idMsgSelecionada, emoji: emoji }));
-            document.getElementById("menuAcoes").style.display = "none";
-        }
-        function aplicarReacaoVisual(id, emoji) {
-            const r = document.getElementById(`reacao_${id}`);
-            if(r) { r.innerText = emoji; r.style.display = "block"; }
-        }
-
-        function apagarMensagemSelecionada() {
-            removerMensagemVisual(idMsgSelecionada);
-            clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'apagar', idMsg: idMsgSelecionada }));
-            document.getElementById("menuAcoes").style.display = "none";
-        }
-        function removerMensagemVisual(id) {
-            const el = document.getElementById(`msg_${id}`);
-            if(el) el.remove();
-        }
+        function enviarReacao(emoji) { aplicarReacaoVisual(idMsgSelecionada, emoji); clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'reacao', idMsg: idMsgSelecionada, emoji: emoji })); document.getElementById("menuAcoes").style.display = "none"; }
+        function aplicarReacaoVisual(id, emoji) { const r = document.getElementById(`reacao_${id}`); if(r) { r.innerText = emoji; r.style.display = "block"; } }
+        function apagarMensagemSelecionada() { removerMensagemVisual(idMsgSelecionada); clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'apagar', idMsg: idMsgSelecionada })); document.getElementById("menuAcoes").style.display = "none"; }
+        function removerMensagemVisual(id) { const el = document.getElementById(`msg_${id}`); if(el) el.remove(); }
 
         // --- SISTEMA EXCLUSIVO DE JOGOS 2D ---
-        function renderizarBalaoJogo(msg, souEu) {
-            const div = document.createElement("div");
-            div.className = "balao-sistema";
-            if (souEu) {
-                div.innerHTML = `Você enviou um convite para jogar <b>${msg.jogo.toUpperCase()}</b>. Aguardando aceitação...`;
-            } else {
-                div.innerHTML = `🎮 <b>${msg.remetenteNome}</b> te convidou para jogar <b>${msg.jogo.toUpperCase()}</b>!<br>
-                <button class="btn-acao" style="margin-top: 10px; padding: 10px;" onclick="aceitarJogo('${msg.jogo}')">🕹️ Aceitar e Jogar</button>`;
-            }
-            document.getElementById("chatArea").appendChild(div);
-            document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
-        }
-
-        function aceitarJogo(j) {
-            clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'aceitou_jogo', jogo: j }));
-            iniciarMotorJogo(j, true);
-        }
-
+        function aceitarJogo(j) { clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'aceitou_jogo', jogo: j })); iniciarMotorJogo(j, true); }
         function iniciarMotorJogo(j, euAceitei) {
-            jogoAtivo = j;
-            document.getElementById("tela-jogo-layer").style.display = "flex";
-            document.getElementById("tituloJogo").innerText = j.toUpperCase();
-            
-            if (j === 'velha') {
-                estadoJogo = ['', '', '', '', '', '', '', '', ''];
-                // Quem aceita é o O (joga segundo), quem convida é o X (joga primeiro)
-                meuSimbolo = euAceitei ? 'O' : 'X';
-                meuTurnoJogo = !euAceitei; 
-                renderizarVelha();
-                document.getElementById("statusJogo").innerText = meuTurnoJogo ? "Sua vez!" : "Vez do oponente...";
-            }
-            else if (j === 'clique') {
-                estadoJogo = { meusCliques: 0, cliquesDele: 0, tempo: 10 };
-                document.getElementById("areaJogoConteudo").innerHTML = `<button class="btn-acao" style="width: 200px; height: 200px; font-size: 2em; border-radius: 20px;" onclick="cliqueRápido()">CLIQUE!</button>`;
-                // Fazer lógica de timer aqui se der tempo...
-                document.getElementById("statusJogo").innerText = "O jogo do clique rápido será liberado em breve!";
-            }
+            jogoAtivo = j; document.getElementById("tela-jogo-layer").style.display = "flex"; document.getElementById("tituloJogo").innerText = j.toUpperCase();
+            if (j === 'velha') { estadoJogo = ['','','','','','','','','']; meuSimbolo = euAceitei ? 'O' : 'X'; meuTurnoJogo = !euAceitei; renderizarVelha(); document.getElementById("statusJogo").innerText = meuTurnoJogo ? "Sua vez!" : "Vez do oponente..."; }
         }
-
-        // Engine: Jogo da Velha
-        function renderizarVelha() {
-            let html = '<div class="grid-velha">';
-            estadoJogo.forEach((cel, i) => { html += `<button class="celula-velha" onclick="fazerJogada(${i})">${cel}</button>`; });
-            html += '</div>';
-            document.getElementById("areaJogoConteudo").innerHTML = html;
-        }
-
+        function renderizarVelha() { let html = '<div class="grid-velha">'; estadoJogo.forEach((cel, i) => { html += `<button class="celula-velha" onclick="fazerJogada(${i})">${cel}</button>`; }); html += '</div>'; document.getElementById("areaJogoConteudo").innerHTML = html; }
         function fazerJogada(i) {
             if (!meuTurnoJogo || estadoJogo[i] !== '') return;
-            
-            estadoJogo[i] = meuSimbolo;
-            meuTurnoJogo = false;
-            document.getElementById("statusJogo").innerText = "Vez do oponente...";
-            renderizarVelha();
-            verificarVitoriaVelha();
-
+            estadoJogo[i] = meuSimbolo; meuTurnoJogo = false; document.getElementById("statusJogo").innerText = "Vez do oponente..."; renderizarVelha(); verificarVitoriaVelha();
             clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'jogada_sync', dados: { index: i, simbolo: meuSimbolo } }));
         }
-
-        function processarJogada(dados) {
-            estadoJogo[dados.index] = dados.simbolo;
-            meuTurnoJogo = true;
-            document.getElementById("statusJogo").innerText = "Sua vez!";
-            renderizarVelha();
-            verificarVitoriaVelha();
-        }
-
+        function processarJogada(dados) { estadoJogo[dados.index] = dados.simbolo; meuTurnoJogo = true; document.getElementById("statusJogo").innerText = "Sua vez!"; renderizarVelha(); verificarVitoriaVelha(); }
         function verificarVitoriaVelha() {
-            const padroes = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
-            for (let p of padroes) {
-                if (estadoJogo[p[0]] && estadoJogo[p[0]] === estadoJogo[p[1]] && estadoJogo[p[0]] === estadoJogo[p[2]]) {
-                    document.getElementById("statusJogo").innerText = `🎉 O Jogador ${estadoJogo[p[0]]} VENCEU!`;
-                    meuTurnoJogo = false;
-                    return;
-                }
-            }
+            const padroes = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for (let p of padroes) if (estadoJogo[p[0]] && estadoJogo[p[0]] === estadoJogo[p[1]] && estadoJogo[p[0]] === estadoJogo[p[2]]) { document.getElementById("statusJogo").innerText = `🎉 O Jogador ${estadoJogo[p[0]]} VENCEU!`; meuTurnoJogo = false; return; }
             if (!estadoJogo.includes('')) document.getElementById("statusJogo").innerText = "Deu Velha! Empate.";
         }
-
-        function encerrarJogo() {
-            document.getElementById("tela-jogo-layer").style.display = "none";
-            jogoAtivo = null;
-            clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'encerrar_jogo' }));
-        }
-        function encerrarJogoRecebido() {
-            document.getElementById("tela-jogo-layer").style.display = "none";
-            jogoAtivo = null;
-            alert("Oponente saiu do jogo.");
-        }
+        function encerrarJogo() { document.getElementById("tela-jogo-layer").style.display = "none"; jogoAtivo = null; clienteMqtt.publish(`comunidade/inbox/${contatoAtualID}`, JSON.stringify({ tipo: 'encerrar_jogo' })); }
+        function encerrarJogoRecebido() { document.getElementById("tela-jogo-layer").style.display = "none"; jogoAtivo = null; alert("Oponente encerrou o jogo."); }
 
         // --- NAVEGAÇÃO ---
         function lidarEnter(e) { if (e.key === "Enter") processarEnvio(); }
